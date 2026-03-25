@@ -1,3 +1,75 @@
 <resources>
     <string name="app_name">Task Manager</string>
+
+    <!-- Auth Screen -->
+    <string name="title_login">Đăng nhập</string>
+    <string name="title_register">Đăng ký</string>
+    <string name="label_full_name">Họ tên</string>
+    <string name="label_email">Email</string>
+    <string name="label_password">Mật khẩu</string>
+    <string name="btn_login">Đăng nhập</string>
+    <string name="btn_register">Đăng ký</string>
+    <string name="switch_to_register">Chưa có tài khoản? Đăng ký</string>
+    <string name="switch_to_login">Đã có tài khoản? Đăng nhập</string>
+
+    <!-- Bottom Nav -->
+    <string name="tab_dashboard">Tổng quan</string>
+    <string name="tab_tasks">Công việc</string>
+    <string name="tab_profile">Cá nhân</string>
+
+    <!-- Dashboard -->
+    <string name="title_dashboard">Tổng quan hệ thống</string>
+    <string name="stat_total">Tổng số</string>
+    <string name="stat_todo">Chờ làm</string>
+    <string name="stat_in_progress">Đang làm</string>
+    <string name="stat_done">Đã xong</string>
+    <string name="stat_overdue">Quá hạn</string>
+    <string name="stat_total_tasks">Tổng số công việc</string>
+
+    <!-- Task Screen -->
+    <string name="label_search">Tìm kiếm công việc…</string>
+    <string name="filter_all">Tất cả</string>
+    <string name="filter_todo">Chờ làm</string>
+    <string name="filter_in_progress">Đang làm</string>
+    <string name="filter_done">Hoàn thành</string>
+    <string name="label_new_task">Công việc mới</string>
+    <string name="btn_add">Thêm mới</string>
+    <string name="btn_adding">Đang thêm…</string>
+    <string name="btn_reload">Tải lại</string>
+    <string name="btn_logout">Đăng xuất</string>
+    <string name="btn_edit">Sửa</string>
+    <string name="btn_delete">Xóa</string>
+    <string name="btn_save">Lưu lại</string>
+    <string name="btn_cancel">Hủy bỏ</string>
+    <string name="status_updating">Đang cập nhật…</string>
+    <string name="status_deleting">Đang xóa…</string>
+    <string name="error_unknown">Có lỗi không xác định xảy ra</string>
+    <string name="task_status_label">Trạng thái: %1$s | Ưu tiên: %2$s</string>
+
+    <!-- Edit Task Dialog -->
+    <string name="dialog_edit_title">Chỉnh sửa công việc</string>
+    <string name="label_title">Tiêu đề</string>
+    <string name="label_description">Mô tả chi tiết</string>
+    <string name="label_status">Trạng thái (todo/in_progress/done)</string>
+    <string name="label_status_short">Trạng thái</string>
+    <string name="label_priority">Độ ưu tiên (low/medium/high)</string>
+    <string name="label_priority_short">Ưu tiên</string>
+    <string name="label_due_date">Hạn chót (YYYY-MM-DD)</string>
+
+    <!-- Delete Task Dialog -->
+    <string name="dialog_delete_title">Xác nhận xóa</string>
+    <string name="dialog_delete_message">Bạn có chắc chắn muốn xóa công việc \'%1$s\' không?</string>
+
+    <!-- Profile -->
+    <string name="label_dark_mode">Chế độ tối (Dark Mode)</string>
+
+    <!-- Error fallbacks -->
+    <string name="error_input_auth">Vui lòng nhập đầy đủ email và mật khẩu</string>
+    <string name="error_input_register">Vui lòng nhập đầy đủ tất cả thông tin</string>
+    <string name="error_login_failed">Đăng nhập thất bại, vui lòng thử lại</string>
+    <string name="error_register_failed">Đăng ký thất bại, vui lòng kiểm tra lại</string>
+    <string name="error_load_tasks">Không thể tải danh sách công việc</string>
+    <string name="error_create_task">Không thể tạo công việc mới</string>
+    <string name="error_update_task">Không thể cập nhật công việc</string>
+    <string name="error_delete_task">Không thể xóa công việc này</string>
 </resources>

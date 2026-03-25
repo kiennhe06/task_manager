@@ -3,6 +3,9 @@ const { body, validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
+const Task = require("../models/Task");
+const requireAuth = require("../middleware/auth");
+const { sendSuccess, sendError } = require("../utils/response");
 
 const router = express.Router();
 
@@ -12,26 +15,46 @@ function signToken(userId) {
   });
 }
 
+// GET current user profile
+router.get("/profile", requireAuth, async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user.id).select("-password");
+    if (!user) {
+      return sendError(res, "Không tìm thấy người dùng", 404);
+    }
+    const taskCount = await Task.countDocuments({ userId: req.user.id });
+    return sendSuccess(res, {
+      id: user._id,
+      fullName: user.fullName,
+      email: user.email,
+      createdAt: user.createdAt,
+      taskCount
+    }, "Lấy thông tin người dùng thành công");
+  } catch (error) {
+    next(error);
+  }
+});
+
 router.post(
   "/register",
   [
-    body("fullName").trim().notEmpty().withMessage("Vui long nhap ho ten"),
-    body("email").isEmail().withMessage("Email khong hop le"),
+    body("fullName").trim().notEmpty().withMessage("Vui lòng nhập họ tên"),
+    body("email").isEmail().withMessage("Email không hợp lệ"),
     body("password")
       .isLength({ min: 6 })
-      .withMessage("Mat khau phai co it nhat 6 ky tu")
+      .withMessage("Mật khẩu phải có ít nhất 6 ký tự")
   ],
   async (req, res, next) => {
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        return sendError(res, errors.array()[0].msg, 400, errors.array());
       }
 
       const { fullName, email, password } = req.body;
       const existingUser = await User.findOne({ email });
       if (existingUser) {
-        return res.status(409).json({ message: "Email da duoc su dung" });
+        return sendError(res, "Email đã được sử dụng", 409);
       }
 
       const hashedPassword = await bcrypt.hash(password, 10);
@@ -42,14 +65,14 @@ router.post(
       });
 
       const token = signToken(user._id.toString());
-      return res.status(201).json({
+      return sendSuccess(res, {
         token,
         user: {
           id: user._id,
           fullName: user.fullName,
           email: user.email
         }
-      });
+      }, "Đăng ký thành công", 201);
     } catch (error) {
       next(error);
     }
@@ -59,36 +82,36 @@ router.post(
 router.post(
   "/login",
   [
-    body("email").isEmail().withMessage("Email khong hop le"),
-    body("password").notEmpty().withMessage("Vui long nhap mat khau")
+    body("email").isEmail().withMessage("Email không hợp lệ"),
+    body("password").notEmpty().withMessage("Vui lòng nhập mật khẩu")
   ],
   async (req, res, next) => {
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        return sendError(res, errors.array()[0].msg, 400, errors.array());
       }
 
       const { email, password } = req.body;
       const user = await User.findOne({ email });
       if (!user) {
-        return res.status(401).json({ message: "Thong tin dang nhap khong dung" });
+        return sendError(res, "Thông tin đăng nhập không đúng", 401);
       }
 
       const isMatch = await bcrypt.compare(password, user.password);
       if (!isMatch) {
-        return res.status(401).json({ message: "Thong tin dang nhap khong dung" });
+        return sendError(res, "Thông tin đăng nhập không đúng", 401);
       }
 
       const token = signToken(user._id.toString());
-      return res.json({
+      return sendSuccess(res, {
         token,
         user: {
           id: user._id,
           fullName: user.fullName,
           email: user.email
         }
-      });
+      }, "Đăng nhập thành công");
     } catch (error) {
       next(error);
     }

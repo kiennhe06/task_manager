@@ -32,8 +32,9 @@ app.use(function (req, res, next) {
 app.use(function (err, req, res, next) {
   var status = err.status || 500;
   res.status(status).json({
+    success: false,
     message: err.message || "Loi he thong",
-    status: status
+    data: null
   });
 });
 

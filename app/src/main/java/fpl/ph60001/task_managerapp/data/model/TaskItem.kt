@@ -5,12 +5,14 @@ data class TaskItem(
     val title: String,
     val description: String = "",
     val status: String = "todo",
-    val priority: String = "medium"
+    val priority: String = "medium",
+    val dueDate: String? = null
 )
 
 data class CreateTaskRequest(
     val title: String,
     val description: String = "",
     val status: String = "todo",
-    val priority: String = "medium"
+    val priority: String = "medium",
+    val dueDate: String? = null
 )
