@@ -16,8 +16,14 @@ class TaskRepository {
         return response.data ?: TaskStats()
     }
 
-    suspend fun createTask(title: String): TaskItem {
-        val response = ApiClient.taskApi.createTask(CreateTaskRequest(title = title))
+    suspend fun createTask(title: String, description: String = "", priority: String = "medium", dueDate: String? = null): TaskItem {
+        val request = CreateTaskRequest(
+            title = title,
+            description = description,
+            priority = priority,
+            dueDate = dueDate
+        )
+        val response = ApiClient.taskApi.createTask(request)
         return response.data ?: throw Exception(response.message)
     }
 

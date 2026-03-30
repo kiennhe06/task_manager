@@ -60,11 +60,11 @@ class TaskViewModel(
         loadTasks()
     }
 
-    fun createTask(title: String) {
+    fun createTask(title: String, description: String = "", priority: String = "medium", dueDate: String? = null) {
         if (title.isBlank()) return
         viewModelScope.launch {
             _state.value = _state.value.copy(isCreating = true, error = null)
-            runCatching { repository.createTask(title.trim()) }
+            runCatching { repository.createTask(title.trim(), description.trim(), priority, dueDate) }
                 .onSuccess {
                     _state.value = _state.value.copy(isCreating = false)
                     loadTasks()

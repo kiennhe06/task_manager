@@ -18,9 +18,17 @@ router.get("/stats", async (req, res, next) => {
       Task.countDocuments({ userId, status: "todo" }),
       Task.countDocuments({ userId, status: "in_progress" }),
       Task.countDocuments({ userId, status: "done" }),
-      Task.countDocuments({ userId, status: { $ne: "done" }, dueDate: { $lt: now } })
+      Task.countDocuments({
+        userId,
+        status: { $ne: "done" },
+        dueDate: { $lt: now },
+      }),
     ]);
-    return sendSuccess(res, { total, todo, inProgress, done, overdue }, "Thống kê công việc");
+    return sendSuccess(
+      res,
+      { total, todo, inProgress, done, overdue },
+      "Thống kê công việc",
+    );
   } catch (error) {
     next(error);
   }
@@ -47,7 +55,10 @@ router.get("/", async (req, res, next) => {
 router.post(
   "/",
   [
-    body("title").trim().notEmpty().withMessage("Vui lòng nhập tiêu đề công việc"),
+    body("title")
+      .trim()
+      .notEmpty()
+      .withMessage("Vui lòng nhập tiêu đề công việc"),
     body("status")
       .optional()
       .isIn(["todo", "in_progress", "done"])
@@ -59,7 +70,7 @@ router.post(
     body("dueDate")
       .optional({ values: "falsy" })
       .isISO8601()
-      .withMessage("Hạn chót phải là ngày hợp lệ (YYYY-MM-DD)")
+      .withMessage("Hạn chót phải là ngày hợp lệ (YYYY-MM-DD)"),
   ],
   async (req, res, next) => {
     try {
@@ -74,14 +85,14 @@ router.post(
         description: req.body.description || "",
         priority: req.body.priority || "medium",
         status: req.body.status || "todo",
-        dueDate: req.body.dueDate || null
+        dueDate: req.body.dueDate || null,
       });
 
       return sendSuccess(res, task, "Tạo công việc thành công", 201);
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 // UPDATE task
@@ -99,7 +110,7 @@ router.put(
     body("dueDate")
       .optional({ values: "falsy" })
       .isISO8601()
-      .withMessage("Hạn chót phải là ngày hợp lệ (YYYY-MM-DD)")
+      .withMessage("Hạn chót phải là ngày hợp lệ (YYYY-MM-DD)"),
   ],
   async (req, res, next) => {
     try {
@@ -116,10 +127,10 @@ router.put(
             description: req.body.description,
             status: req.body.status,
             priority: req.body.priority,
-            dueDate: req.body.dueDate
-          }
+            dueDate: req.body.dueDate,
+          },
         },
-        { new: true, runValidators: true }
+        { new: true, runValidators: true },
       );
 
       if (!updatedTask) {
@@ -129,7 +140,7 @@ router.put(
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 // DELETE task
@@ -137,7 +148,7 @@ router.delete("/:id", async (req, res, next) => {
   try {
     const deletedTask = await Task.findOneAndDelete({
       _id: req.params.id,
-      userId: req.user.id
+      userId: req.user.id,
     });
     if (!deletedTask) {
       return sendError(res, "Không tìm thấy công việc", 404);

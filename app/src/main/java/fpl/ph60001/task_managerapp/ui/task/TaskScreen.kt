@@ -349,23 +349,89 @@ fun TaskCard(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddFileOrTaskDialog(onDismiss: () -> Unit, onConfirm: (String) -> Unit) {
+fun AddFileOrTaskDialog(onDismiss: () -> Unit, onConfirm: (String, String, String, String?) -> Unit) {
+    val context = LocalContext.current
     var title by remember { mutableStateOf("") }
+    var desc by remember { mutableStateOf("") }
+    var priority by remember { mutableStateOf("medium") }
+    var dueDate by remember { mutableStateOf("") }
+
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text("Tạo công việc mới", fontWeight = FontWeight.Bold) },
         text = {
-            OutlinedTextField(
-                value = title,
-                onValueChange = { title = it },
-                label = { Text("Tiêu đề công việc") },
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp)
-            )
+            Column(
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                modifier = Modifier.verticalScroll(rememberScrollState())
+            ) {
+                OutlinedTextField(
+                    value = title,
+                    onValueChange = { title = it },
+                    label = { Text("Tiêu đề công việc") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp)
+                )
+
+                OutlinedTextField(
+                    value = desc,
+                    onValueChange = { desc = it },
+                    label = { Text("Mô tả (không bắt buộc)") },
+                    shape = RoundedCornerShape(12.dp),
+                    modifier = Modifier.fillMaxWidth(),
+                    minLines = 2
+                )
+
+                Column {
+                    Text("Độ ưu tiên", style = MaterialTheme.typography.labelLarge, color = GradientStart, fontWeight = FontWeight.Bold)
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.padding(top = 8.dp)) {
+                        listOf("low", "medium", "high").forEach { p ->
+                            FilterChip(
+                                selected = priority == p,
+                                onClick = { priority = p },
+                                label = { Text(p.uppercase()) },
+                                shape = RoundedCornerShape(8.dp)
+                            )
+                        }
+                    }
+                }
+
+                OutlinedTextField(
+                    value = dueDate.let { if (it.isNotBlank()) formatDateDisplay(it) else "" },
+                    onValueChange = { },
+                    label = { Text("Hạn chót (không bắt buộc)") },
+                    readOnly = true,
+                    shape = RoundedCornerShape(12.dp),
+                    modifier = Modifier.fillMaxWidth(),
+                    trailingIcon = {
+                        IconButton(onClick = {
+                            val cal = Calendar.getInstance()
+                            DatePickerDialog(
+                                context,
+                                { _, year, month, day ->
+                                    dueDate = String.format("%04d-%02d-%02d", year, month + 1, day)
+                                },
+                                cal.get(Calendar.YEAR),
+                                cal.get(Calendar.MONTH),
+                                cal.get(Calendar.DAY_OF_MONTH)
+                            ).show()
+                        }) {
+                            Icon(Icons.Filled.CalendarToday, contentDescription = null, tint = GradientStart)
+                        }
+                    }
+                )
+            }
         },
         confirmButton = {
-            Button(onClick = { onConfirm(title) }, enabled = title.isNotBlank(), shape = RoundedCornerShape(12.dp)) {
+            Button(
+                onClick = { 
+                    onConfirm(title, desc, priority, dueDate.takeIf { it.isNotBlank() }) 
+                }, 
+                enabled = title.isNotBlank(), 
+                shape = RoundedCornerShape(12.dp)
+            ) {
                 Text("Thêm")
             }
         },

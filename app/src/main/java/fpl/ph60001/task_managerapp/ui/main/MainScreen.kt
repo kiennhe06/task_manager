@@ -138,8 +138,8 @@ fun MainScreen(
     if (showAddDialog) {
         fpl.ph60001.task_managerapp.ui.task.AddFileOrTaskDialog(
             onDismiss = { showAddDialog = false },
-            onConfirm = { title ->
-                taskViewModel.createTask(title)
+            onConfirm = { title, desc, priority, dueDate ->
+                taskViewModel.createTask(title, desc, priority, dueDate)
                 showAddDialog = false
                 // If we're on dashboard, refresh stats
                 if (selectedTab == 0) dashboardViewModel.loadStats()
